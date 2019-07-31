@@ -17,51 +17,24 @@ if [ ! -d "${SRC_DIR}" ]; then
     echo -e "${SRC_DIR} DOES NOT EXIST, using default '/usr/local/src'\n"
 fi
 
-# Upgrade disk image and install vim, curl, pip3 & nginx
-set -x
-apt update -y && apt upgrade -y
-python -m pip install numpy --user
-apt install vim curl python3-pip nginx -y
-service nginx stop
-set +x
-
-echo -e "set number\nset tabstop=4\nset shiftwidth=4\nset expandtab\nset hlsearch\n" >> ~/.vimrc
-echo -e "SETUP ./~vimrc"
-
-# scala syntax hightlighting
-mkdir -p ~/.vim/{ftdetect,indent,syntax} && \
-for d in ftdetect indent syntax; do
-    wget -O ~/.vim/$d/scala.vim https://raw.githubusercontent.com/derekwyatt/vim-scala/master/$d/scala.vim > /dev/null;
-done
-echo -e "SETUP scala.vim at ~/.vim\n"
-
-
 set -x
 export SRC_DIR="/usr/local/src"
-export TMP_LVM="/dev/mapper/emulab-wsklvm" # Logical volume location
 export OPENWHISK_HOME="${SRC_DIR}/openwhisk" # OpenWhisk location
 export OPENWHISK_TMP_DIR="/opt/openwhisk/tmp"
-export DOCKER_DIR="/dockerdata"
-export PIPBENCH="${SRC_DIR}/pipbench"
+export EXTRA_STORE="/extra"
+export DOCKER_DIR=${EXTRA_STORE}
 set +x
 
 
-echo -e "CREATE & MOUNT logical volume at ${DOCKER_DIR}...\n"
-if [ -e "${TMP_LVM}" ];
+if [ -e "${EXTRA_STORE}" ];
 then
-    echo "Logical volume already exists (${TMP_LVM}), skipping ..."
+    echo "${EXTRA_STORE} exists, skipping..."
 else
+    mkdir ${EXTRA_STORE}
+    /usr/local/etc/emulab/mkextrafs.pl ${EXTRA_STORE}
     lvcreate -L 30G emulab -n wsklvm
-    echo 'TMP_LVM="'${TMP_LVM}'"' | tee -a /etc/environment
-fi
-# Mount logical volume
-if [ -e "${DOCKER_DIR}" ];
-then
-    echo "Cannot mount ${TMP_LVM} filesystem at ${DOCKER_DIR}, skipping ..."
-else
-    mkdir ${DOCKER_DIR}
-    mkfs.ext4 ${TMP_LVM}
-    mount ${TMP_LVM} ${DOCKER_DIR}
+    echo 'EXTRA_STORE="'${EXTRA_STORE}'"' | tee -a /etc/environment
+
     mkdir ${DOCKER_DIR}/docker-tmp ${DOCKER_DIR}/docker-aufs
 fi
 
@@ -84,7 +57,6 @@ else
     # git checkout testchanges
     echo Installing Openwhisk Deps
     (cd tools/ubuntu-setup && ./all.sh)
-    echo 'ACT_DIR="'${SRC_DIR}'/actions"' | tee -a /etc/environment
 
     # Set docket opts to use mount point as image installation dir
     service docker stop
@@ -106,26 +78,6 @@ echo -e "DEPLOY OpenWhisk...\n"
 (${HOME}/openwhisk_deploy.sh)
 
 # Deploy openwhisk
-
-echo -e "DOWNLOAD & SETUP PIPBench...\n"
-cd ${SRC_DIR}
-if [ -f ${PIPBENCH} ];
-then
-    echo "PIPBENCH already installed ($PIPBENCH), skipping..."
-else
-    (cd ${SRC_DIR} && git clone https://github.com/xav-a/pipbench.git pipbench &&
-        cd pipbench &&  git checkout wsk-support)
-    echo 'PIPBENCH="'${PIPBENCH}'"' | tee -a /etc/environment
-    set -x
-    pip3 install --upgrade pip==19.1
-    python3 -m pip install numpy grequests requests
-    set +x
-
-    (${HOME}/pipbench_setup.sh ${PIPBENCH})
-fi
-
-
-
 
 # Create Image
 # cd $OPENWHISK_HOME

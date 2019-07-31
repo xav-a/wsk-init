@@ -1,5 +1,6 @@
 #!/bin/bash
 ME=`basename "$0"`
+API_HOST="172.17.0.1"
 
 # Make sure variable is set
 if [ -z "${OPENWHISK_HOME}" ]; then
@@ -41,7 +42,7 @@ ansible-playbook -i environments/local routemgmt.yml
 # Config wsk-cli
 cd ..
 cp bin/wsk /usr/local/bin
-wsk property set --apihost 172.17.0.1
+wsk property set --apihost ${API_HOST}
 wsk property set --auth `cat ansible/files/auth.guest`
 wsk property get --auth
 

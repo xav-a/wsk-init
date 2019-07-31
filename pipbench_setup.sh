@@ -1,5 +1,12 @@
 #!/bin/bash
 
+# Upgrade disk image and install vim, curl, pip3 & nginx
+set -x
+apt update -y && apt upgrade -y
+python -m pip install numpy --user
+apt install vim curl python3-pip nginx -y
+service nginx stop
+set +x
 
 if [[ -z "${PIPBENCH}" ]]; then
     PIPBENCH=$1
