@@ -55,11 +55,14 @@ else
     cd ${OPENWHISK_HOME}/
     # git checkout testchanges
     echo Installing Openwhisk Deps
+
+    # Leave here bc of libseccomp2 dependency error (would no install docker)
+    add-apt-repository ppa:ubuntu-sdk-team/ppa
     (cd tools/ubuntu-setup && ./all.sh)
 
     # Set docket opts to use mount point as image installation dir
     service docker stop
-    echo 'export TMPDIR="'${DOCKER_DIR}'/docker-tmp"' | tee -a /etc/default/docker
+    echo 'TMPDIR="'${DOCKER_DIR}'/docker-tmp"' | tee -a /etc/default/docker
     echo 'DOCKER_OPTS="$DOCKER_OPTS -g '${DOCKER_DIR}'/docker-aufs"' | tee -a /etc/default/docker
     service docker start
 fi
