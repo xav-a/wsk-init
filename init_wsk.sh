@@ -21,8 +21,7 @@ fi
 set -x
 apt update -y && apt upgrade -y
 python -m pip install numpy --user
-apt install vim curl python3-pip nginx -y
-service nginx stop
+apt install vim python3-pip -y
 set +x
 
 echo -e "set number\nset tabstop=4\nset shiftwidth=4\nset expandtab\nset hlsearch\n" >> ~/.vimrc

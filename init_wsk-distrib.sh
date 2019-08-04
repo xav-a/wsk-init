@@ -32,7 +32,6 @@ then
 else
     mkdir ${EXTRA_STORE}
     /usr/local/etc/emulab/mkextrafs.pl ${EXTRA_STORE}
-    lvcreate -L 30G emulab -n wsklvm
     echo 'EXTRA_STORE="'${EXTRA_STORE}'"' | tee -a /etc/environment
 
     mkdir ${DOCKER_DIR}/docker-tmp ${DOCKER_DIR}/docker-aufs

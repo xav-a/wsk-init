@@ -2,6 +2,7 @@
 
 # Upgrade disk image and install vim, curl, pip3 & nginx
 echo -e "set number\nset tabstop=4\nset softtabstop=4\nset shiftwidth=4\nset expandtab\nset hlsearch\n" >> ~/.vimrc
+echo -e "colorscheme desert\n" >> ~/.vimrc
 echo -e "SETUP ./~vimrc"
 
 # scala syntax hightlighting
@@ -11,3 +12,4 @@ for d in ftdetect indent syntax; do
 done
 echo -e "SETUP scala.vim at ~/.vim\n"
 
+git config --global core.editor "vim"
