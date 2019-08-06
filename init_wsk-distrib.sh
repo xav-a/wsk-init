@@ -48,12 +48,9 @@ else
     git clone https://github.com/xav-a/incub-openwhisk-sch.git openwhisk
 	echo 'OPENWHISK_HOME="'${OPENWHISK_HOME}'"' | tee -a /etc/environment
 
-    # Make DIR to hold actions
-    cp -r $HOME/actions/ ${SRC_DIR}
-
     # Install openwhisk dep
     cd ${OPENWHISK_HOME}/
-    # git checkout testchanges
+    git checkout distrib
     echo Installing Openwhisk Deps
 
     # Leave here bc of libseccomp2 dependency error (would no install docker)
