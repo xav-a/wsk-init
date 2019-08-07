@@ -22,6 +22,7 @@ set -xe
 # Deploy openwhisk
 cd ${OPENWHISK_HOME}/ansible
 ansible-playbook -i environments/local setup.yml
+ansible-playbook -i environments/local prereq.yml
 
 cd ..
 ./gradlew distDocker
