@@ -1,7 +1,6 @@
 #!/bin/bash
 ME=`basename "$0"`
 API_HOST="172.17.0.1"
-
 set -x
 
 # Make sure variable is set

@@ -56,7 +56,7 @@ else
 
     # Install openwhisk dep
     cd ${OPENWHISK_HOME}/
-    git checkout distrib
+
     echo Installing Openwhisk Deps
 
     # Leave here bc of libseccomp2 dependency error (would no install docker)
@@ -85,6 +85,7 @@ vim ${OPENWHISK_HOME}/ansible/environments/local/hosts*
 echo -e "DEPLOY OpenWhisk...\n"
 (${HOME}/${REPO_DIR}/openwhisk_deploy.sh)
 
+exit 0
 # Deploy openwhisk
 
 # Create Image
