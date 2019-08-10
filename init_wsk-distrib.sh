@@ -1,5 +1,9 @@
 #!/bin/bash
+
+set -e
+
 ME=`basename $0`
+REPO_DIR="wsk-init"
 
 if [ $# -eq 0 ]; then
     echo -e "\n"\
@@ -59,7 +63,7 @@ else
 
     # Set docket opts to use mount point as image installation dir
     service docker stop
-    echo 'TMPDIR="'${DOCKER_DIR}'/docker-tmp"' | tee -a /etc/default/docker
+    echo 'DOCKER_TMPDIR="'${DOCKER_DIR}'/docker-tmp"' | tee -a /etc/default/docker
     echo 'DOCKER_OPTS="$DOCKER_OPTS -g '${DOCKER_DIR}'/docker-aufs"' | tee -a /etc/default/docker
     service docker start
 fi
@@ -73,8 +77,10 @@ else
 fi
 
 
+vim ${OPENWHISK_HOME}/ansible/environments/local/hosts*
+
 echo -e "DEPLOY OpenWhisk...\n"
-(${HOME}/openwhisk_deploy.sh)
+(${HOME}/${REPO_DIR}/openwhisk_deploy.sh)
 
 # Deploy openwhisk
 

@@ -2,6 +2,8 @@
 ME=`basename "$0"`
 API_HOST="172.17.0.1"
 
+set -x
+
 # Make sure variable is set
 if [ -z "${OPENWHISK_HOME}" ]; then
     echo -e "OPENWHISK_HOME environment variable not set\n"
@@ -25,9 +27,14 @@ ansible-playbook -i environments/local setup.yml
 ansible-playbook -i environments/local prereq.yml
 
 cd ..
-./gradlew distDocker
+./gradlew --no-daemon distDocker
 
 cd ansible
+### It might be necessary to manually pull couchdb and zookeeper
+### with docker before running couchdb.ym and openwhisk.yml respectively
+# docker pull apache/couchdb:{version}
+# docker pull zookeeper:{version}
+
 ansible-playbook -i environments/local couchdb.yml && \
 ansible-playbook -i environments/local initdb.yml && \
 ansible-playbook -i environments/local wipe.yml && \
